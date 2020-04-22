@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30002.166
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHMoreSlotID", "PHMoreSlotID\PHMoreSlotID.csproj", "{8648EDEA-073A-4600-A545-39DE59A74BEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHMoreSlotIDPatchContainer", "PHMoreSlotIDPatchContainer\PHMoreSlotIDPatchContainer.csproj", "{2F111D5C-C675-40DD-958B-99B736ADD0BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8648EDEA-073A-4600-A545-39DE59A74BEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8648EDEA-073A-4600-A545-39DE59A74BEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8648EDEA-073A-4600-A545-39DE59A74BEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8648EDEA-073A-4600-A545-39DE59A74BEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F111D5C-C675-40DD-958B-99B736ADD0BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F111D5C-C675-40DD-958B-99B736ADD0BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F111D5C-C675-40DD-958B-99B736ADD0BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F111D5C-C675-40DD-958B-99B736ADD0BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {03C6C27C-B255-4D03-B2FA-59AE99991884}
+	EndGlobalSection
+EndGlobal
