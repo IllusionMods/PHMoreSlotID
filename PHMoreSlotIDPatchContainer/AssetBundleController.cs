@@ -13,14 +13,15 @@ namespace PHMoreSlotIDPatchContainer
 				string text = directory + "/thumnbnail_R/" + assetName + ".png";
 				if(File.Exists(text))
 				{
-					Console.WriteLine("Load thumb:" + text);
 					return (T)((object)LoadPNG(text));
 				}
 			}
+
 			if(assetBundle != null)
 			{
 				return assetBundle.LoadAsset<T>(assetName);
 			}
+
 			return default;
 		}
 

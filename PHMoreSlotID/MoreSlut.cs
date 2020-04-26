@@ -1,6 +1,5 @@
 ﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,14 +14,14 @@ namespace PHMoreSlotID
         {
             var hookAss = AssemblyDefinition.ReadAssembly(Path.Combine(BepInEx.Paths.PatcherPluginPath, "PHMoreSlotIDPatchContainer.dll"));
 
+            var customDataSetupLoader = ass.MainModule.GetType("CustomDataSetupLoader`1");
+            var customDataSetupLoaderAction = customDataSetupLoader.Fields.FirstOrDefault(m => m.Name == "action");
+
             {
-                var targetType = ass.MainModule.GetType("CustomDataSetupLoader`1");
-                var targetMethod = targetType.Methods.FirstOrDefault(m => m.Name == "Setup");
+                var targetMethod = customDataSetupLoader.Methods.FirstOrDefault(m => m.Name == "Setup");
 
                 var hookMethod = hookAss.MainModule.GetType("PHMoreSlotIDPatchContainer.CustomDataSetupLoader`1").Methods.FirstOrDefault(m => m.Name == "Setup");
                 var hookRef = ass.MainModule.ImportReference(hookMethod);
-
-                var action = targetType.Fields.FirstOrDefault(m => m.Name == "action");
 
                 var il = targetMethod.Body.GetILProcessor();
                 var ins = targetMethod.Body.Instructions.First();
@@ -30,19 +29,16 @@ namespace PHMoreSlotID
                 il.InsertBefore(ins, il.Create(OpCodes.Ldarg_1));
                 il.InsertBefore(ins, il.Create(OpCodes.Ldarg_2));
                 il.InsertBefore(ins, il.Create(OpCodes.Ldarg_0));
-                il.InsertBefore(ins, il.Create(OpCodes.Ldfld, action));
+                il.InsertBefore(ins, il.Create(OpCodes.Ldfld, customDataSetupLoaderAction));
                 il.InsertBefore(ins, il.Create(OpCodes.Call, hookRef));
                 il.InsertBefore(ins, il.Create(OpCodes.Ret));
             }
 
             {
-                var targetType = ass.MainModule.GetType("CustomDataSetupLoader`1");
-                var targetMethod = targetType.Methods.FirstOrDefault(m => m.Name == "Setup_Search");
+                var targetMethod = customDataSetupLoader.Methods.FirstOrDefault(m => m.Name == "Setup_Search");
 
                 var hookMethod = hookAss.MainModule.GetType("PHMoreSlotIDPatchContainer.CustomDataSetupLoader`1").Methods.FirstOrDefault(m => m.Name == "Setup_Search");
                 var hookRef = ass.MainModule.ImportReference(hookMethod);
-
-                var action = targetType.Fields.FirstOrDefault(m => m.Name == "action");
 
                 var il = targetMethod.Body.GetILProcessor();
                 var ins = targetMethod.Body.Instructions.First();
@@ -50,7 +46,7 @@ namespace PHMoreSlotID
                 il.InsertBefore(ins, il.Create(OpCodes.Ldarg_1));
                 il.InsertBefore(ins, il.Create(OpCodes.Ldarg_2));
                 il.InsertBefore(ins, il.Create(OpCodes.Ldarg_0));
-                il.InsertBefore(ins, il.Create(OpCodes.Ldfld, action));
+                il.InsertBefore(ins, il.Create(OpCodes.Ldfld, customDataSetupLoaderAction));
                 il.InsertBefore(ins, il.Create(OpCodes.Call, hookRef));
                 il.InsertBefore(ins, il.Create(OpCodes.Ret));
             }
