@@ -1,4 +1,5 @@
-﻿using Mono.Cecil;
+﻿using System;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Linq;
 
 namespace PHMoreSlotID
 {
-    public static class MoreSlut
+    public static class MoreSlotPatcher
     {
         public static IEnumerable<string> TargetDLLs { get; } = new[] { "Assembly-CSharp.dll" };
 
@@ -14,11 +15,11 @@ namespace PHMoreSlotID
         {
             var hookAss = AssemblyDefinition.ReadAssembly(Path.Combine(BepInEx.Paths.PatcherPluginPath, "PHMoreSlotIDPatchContainer.dll"));
 
-            var customDataSetupLoader = ass.MainModule.GetType("CustomDataSetupLoader`1");
-            var customDataSetupLoaderAction = customDataSetupLoader.Fields.FirstOrDefault(m => m.Name == "action");
+            var customDataSetupLoader = ass.MainModule.GetType("CustomDataSetupLoader`1") ?? throw new EntryPointNotFoundException("CustomDataSetupLoader`1");
+            var customDataSetupLoaderAction = customDataSetupLoader.Fields.FirstOrDefault(m => m.Name == "action") ?? throw new EntryPointNotFoundException("action");
 
             {
-                var targetMethod = customDataSetupLoader.Methods.FirstOrDefault(m => m.Name == "Setup");
+                var targetMethod = customDataSetupLoader.Methods.FirstOrDefault(m => m.Name == "Setup") ?? throw new EntryPointNotFoundException("Setup");
 
                 var hookMethod = hookAss.MainModule.GetType("PHMoreSlotIDPatchContainer.CustomDataSetupLoader`1").Methods.FirstOrDefault(m => m.Name == "Setup");
                 var hookRef = ass.MainModule.ImportReference(hookMethod);
@@ -35,7 +36,7 @@ namespace PHMoreSlotID
             }
 
             {
-                var targetMethod = customDataSetupLoader.Methods.FirstOrDefault(m => m.Name == "Setup_Search");
+                var targetMethod = customDataSetupLoader.Methods.FirstOrDefault(m => m.Name == "Setup_Search") ?? throw new EntryPointNotFoundException("Setup_Search");
 
                 var hookMethod = hookAss.MainModule.GetType("PHMoreSlotIDPatchContainer.CustomDataSetupLoader`1").Methods.FirstOrDefault(m => m.Name == "Setup_Search");
                 var hookRef = ass.MainModule.ImportReference(hookMethod);
@@ -53,16 +54,16 @@ namespace PHMoreSlotID
 
             {
                 var targetType = ass.MainModule.GetType("AssetBundleController");
-                var targetMethod = targetType.Methods.FirstOrDefault(m => m.Name == "LoadAsset");
+                var targetMethod = targetType.Methods.FirstOrDefault(m => m.Name == "LoadAsset") ?? throw new EntryPointNotFoundException("LoadAsset");
 
                 var hookMethod = hookAss.MainModule.GetType("PHMoreSlotIDPatchContainer.AssetBundleController").Methods.FirstOrDefault(m => m.Name == "LoadAsset");
                 var hookRef = ass.MainModule.ImportReference(hookMethod);
                 var hookGenericRef = new GenericInstanceMethod(hookRef);
                 hookGenericRef.GenericArguments.Add(targetMethod.GenericParameters[0]);
 
-                var assetBundle = targetType.Fields.FirstOrDefault(m => m.Name == "assetBundle");
-                var directory = targetType.Properties.FirstOrDefault(m => m.Name == "directory").GetMethod;
-                var assetBundleName = targetType.Properties.FirstOrDefault(m => m.Name == "assetBundleName").GetMethod;
+                var assetBundle = targetType.Fields.FirstOrDefault(m => m.Name == "assetBundle") ?? throw new EntryPointNotFoundException("assetBundle");
+                var directory = targetType.Properties.FirstOrDefault(m => m.Name == "directory")?.GetMethod ?? throw new EntryPointNotFoundException("directory");
+                var assetBundleName = targetType.Properties.FirstOrDefault(m => m.Name == "assetBundleName")?.GetMethod ?? throw new EntryPointNotFoundException("assetBundleName");
 
                 var il = targetMethod.Body.GetILProcessor();
                 var ins = targetMethod.Body.Instructions.First();
@@ -80,12 +81,12 @@ namespace PHMoreSlotID
 
             {
                 var targetType = ass.MainModule.GetType("ItemDataBase");
-                var targetMethod = targetType.Methods.FirstOrDefault(m => m.Name == ".ctor" && m.Parameters.Count == 5);
+                var targetMethod = targetType.Methods.FirstOrDefault(m => m.Name == ".ctor" && m.Parameters.Count == 5) ?? throw new EntryPointNotFoundException("ItemDataBase.ctor");
 
                 var hookMethod = hookAss.MainModule.GetType("PHMoreSlotIDPatchContainer.ItemDataBase").Methods.FirstOrDefault(m => m.Name == "CtorPostfix");
                 var hookRef = ass.MainModule.ImportReference(hookMethod);
 
-                var id = targetType.Fields.FirstOrDefault(m => m.Name == "id");
+                var id = targetType.Fields.FirstOrDefault(m => m.Name == "id") ?? throw new EntryPointNotFoundException("id");
 
                 var il = targetMethod.Body.GetILProcessor();
                 var ins = targetMethod.Body.Instructions.Last();

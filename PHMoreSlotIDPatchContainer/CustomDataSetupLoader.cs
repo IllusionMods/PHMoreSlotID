@@ -9,70 +9,77 @@ namespace PHMoreSlotIDPatchContainer
     {
         public static void Setup(Dictionary<int, T_Data> datas, global::AssetBundleController abc, Action<Dictionary<int, T_Data>, global::AssetBundleController, CustomDataListLoader> action)
         {
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(abc.assetBundleName);
-            string text = abc.directory + "/list/" + abc.assetBundleName + "_list.txt";
-            if(File.Exists(text))
+            var bundleName = Path.GetFileNameWithoutExtension(abc.assetBundleName);
+            var listPath = abc.directory + "/list/" + abc.assetBundleName + "_list.txt";
+            if(File.Exists(listPath))
             {
                 var customDataListLoader = new CustomDataListLoader();
-                customDataListLoader.Load(text);
+                customDataListLoader.Load(listPath);
                 action(datas, abc, customDataListLoader);
                 return;
             }
 
-            var textAsset = abc.LoadAsset<TextAsset>(fileNameWithoutExtension + "_list");
-            if(textAsset)
+            var listAsset = abc.LoadAsset<TextAsset>(bundleName + "_list");
+            if(listAsset)
             {
                 var customDataListLoader2 = new CustomDataListLoader();
-                customDataListLoader2.Load(textAsset);
+                customDataListLoader2.Load(listAsset);
                 action(datas, abc, customDataListLoader2);
             }
         }
 
         public static void Setup_Search(Dictionary<int, T_Data> datas, string search, Action<Dictionary<int, T_Data>, global::AssetBundleController, CustomDataListLoader> action)
         {
-            string text = "";
-            int num = search.LastIndexOf("/");
+            var dir = "";
+            var lastSlash = search.LastIndexOf("/", StringComparison.Ordinal);
 
-            if(num != -1)
+            if(lastSlash != -1)
             {
-                text = search.Substring(0, num);
-                search = search.Remove(0, num + 1);
+                dir = search.Substring(0, lastSlash);
+                search = search.Remove(0, lastSlash + 1);
             }
 
-            string[] files = Directory.GetFiles(GlobalData.assetBundlePath + "/" + text, search, SearchOption.TopDirectoryOnly);
+            var bundleDir = GlobalData.assetBundlePath + "/" + dir;
+            var files = Directory.GetFiles(bundleDir, search, SearchOption.TopDirectoryOnly);
             Array.Sort(files);
-            foreach(string path in files)
+            foreach(var bundlePath in files)
             {
-                if(Path.GetExtension(path).Length == 0)
+                if(Path.GetExtension(bundlePath).Length == 0)
                 {
-                    string text2 = Path.GetFileNameWithoutExtension(path);
-                    if(text.Length > 0)
-                        text2 = text + "/" + text2;
+                    var bundleName = Path.GetFileNameWithoutExtension(bundlePath);
+                    if(dir.Length > 0)
+                        bundleName = dir + "/" + bundleName;
 
-                    global::AssetBundleController assetBundleController = new global::AssetBundleController();
-                    assetBundleController.OpenFromFile(GlobalData.assetBundlePath, text2);
+                    var assetBundleController = new global::AssetBundleController();
+                    assetBundleController.OpenFromFile(GlobalData.assetBundlePath, bundleName);
                     Setup(datas, assetBundleController, action);
                     assetBundleController.Close(false);
                 }
             }
 
-            if(!Directory.Exists(GlobalData.assetBundlePath + "/list/" + text))
+            var listDir = GlobalData.assetBundlePath + "/list/" + dir;
+            if(!Directory.Exists(listDir))
                 return;
 
-            foreach(string text3 in Directory.GetFiles(GlobalData.assetBundlePath + "/list/" + text, search + "_Mlist.txt"))
+            foreach(var text3 in Directory.GetFiles(listDir, search + "_Mlist.txt"))
             {
-                StreamReader streamReader = new StreamReader(new FileStream(text3, FileMode.Open));
-                string assetBundleName = streamReader.ReadLine();
-                string contents = streamReader.ReadToEnd();
-                string tempFileName = Path.GetTempFileName();
-                File.WriteAllText(tempFileName, contents);
-                CustomDataListLoader customDataListLoader = new CustomDataListLoader();
-                customDataListLoader.Load(tempFileName);
-                File.Delete(tempFileName);
-                global::AssetBundleController assetBundleController2 = new global::AssetBundleController();
-                assetBundleController2.OpenFromFile(GlobalData.assetBundlePath, assetBundleName);
-                action(datas, assetBundleController2, customDataListLoader);
-                assetBundleController2.Close(false);
+                using(var streamReader = new StreamReader(new FileStream(text3, FileMode.Open)))
+                {
+                    var assetBundleName = streamReader.ReadLine();
+                    var contents = streamReader.ReadToEnd();
+
+                    var tempFileName = Path.GetTempFileName();
+                    File.WriteAllText(tempFileName, contents);
+
+                    var customDataListLoader = new CustomDataListLoader();
+                    customDataListLoader.Load(tempFileName);
+                    File.Delete(tempFileName);
+
+                    var assetBundleController2 = new global::AssetBundleController();
+                    assetBundleController2.OpenFromFile(GlobalData.assetBundlePath, assetBundleName);
+                    action(datas, assetBundleController2, customDataListLoader);
+                    assetBundleController2.Close(false);
+                }
             }
         }
     }
