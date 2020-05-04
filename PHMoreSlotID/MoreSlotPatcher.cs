@@ -4,6 +4,7 @@ using Mono.Cecil.Cil;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BepInEx;
 
 namespace PHMoreSlotID
 {
@@ -18,6 +19,20 @@ namespace PHMoreSlotID
             {
                 Console.WriteLine("Could not patch PHMoreSlotID because the assembly is already hardpatched. Restore the original Assembly-CSharp and try again.");
                 return;
+            }
+
+            foreach (var subdir in new[]
+            {
+                @"abdata\list\accessory",
+                @"abdata\list\custommaterial",
+                @"abdata\list\customtexture",
+                @"abdata\list\hair",
+                @"abdata\list\wear",
+                @"abdata\thumnbnail_R",
+            })
+            {
+                // Make sure the directories exist to mimic how the original was distributed, and to prevent crashes later on
+                Directory.CreateDirectory(Path.Combine(Paths.GameRootPath, subdir));
             }
 
             var hookAss = AssemblyDefinition.ReadAssembly(Path.Combine(BepInEx.Paths.PatcherPluginPath, "PHMoreSlotIDPatchContainer.dll"));
