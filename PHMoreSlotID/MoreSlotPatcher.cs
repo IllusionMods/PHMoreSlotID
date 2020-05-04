@@ -13,6 +13,13 @@ namespace PHMoreSlotID
 
         public static void Patch(AssemblyDefinition ass)
         {
+            var hardpatched = ass.MainModule.Resources.Any(r => string.Equals(r.Name, "ILRepack.List‎", StringComparison.InvariantCultureIgnoreCase));
+            if (hardpatched)
+            {
+                Console.WriteLine("Could not patch PHMoreSlotID because the assembly is already hardpatched. Restore the original Assembly-CSharp and try again.");
+                return;
+            }
+
             var hookAss = AssemblyDefinition.ReadAssembly(Path.Combine(BepInEx.Paths.PatcherPluginPath, "PHMoreSlotIDPatchContainer.dll"));
 
             var customDataSetupLoader = ass.MainModule.GetType("CustomDataSetupLoader`1") ?? throw new EntryPointNotFoundException("CustomDataSetupLoader`1");
