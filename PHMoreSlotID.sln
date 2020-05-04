@@ -7,7 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHMoreSlotID", "PHMoreSlotI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHMoreSlotIDPatchContainer", "PHMoreSlotIDPatchContainer\PHMoreSlotIDPatchContainer.csproj", "{2F111D5C-C675-40DD-958B-99B736ADD0BF}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "Shared\Shared.shproj", "{10A0525B-4BFE-4F73-9FEA-F7DB5E225F83}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared\Shared.projitems*{10a0525b-4bfe-4f73-9fea-f7db5e225f83}*SharedItemsImports = 13
+		Shared\Shared.projitems*{2f111d5c-c675-40dd-958b-99b736add0bf}*SharedItemsImports = 4
+		Shared\Shared.projitems*{8648edea-073a-4600-a545-39de59a74bec}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
