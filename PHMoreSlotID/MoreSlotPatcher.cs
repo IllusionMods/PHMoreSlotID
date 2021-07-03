@@ -83,20 +83,11 @@ namespace PHMoreSlotID
                 var hookGenericRef = new GenericInstanceMethod(hookRef);
                 hookGenericRef.GenericArguments.Add(targetMethod.GenericParameters[0]);
 
-                var assetBundle = targetType.Fields.FirstOrDefault(m => m.Name == "assetBundle") ?? throw new EntryPointNotFoundException("assetBundle");
-                var directory = targetType.Properties.FirstOrDefault(m => m.Name == "directory")?.GetMethod ?? throw new EntryPointNotFoundException("directory");
-                var assetBundleName = targetType.Properties.FirstOrDefault(m => m.Name == "assetBundleName")?.GetMethod ?? throw new EntryPointNotFoundException("assetBundleName");
-
                 var il = targetMethod.Body.GetILProcessor();
                 var ins = targetMethod.Body.Instructions.First();
 
                 il.InsertBefore(ins, il.Create(OpCodes.Ldarg_1));
                 il.InsertBefore(ins, il.Create(OpCodes.Ldarg_0));
-                il.InsertBefore(ins, il.Create(OpCodes.Ldfld, assetBundle));
-                il.InsertBefore(ins, il.Create(OpCodes.Ldarg_0));
-                il.InsertBefore(ins, il.Create(OpCodes.Callvirt, directory));
-                il.InsertBefore(ins, il.Create(OpCodes.Ldarg_0));
-                il.InsertBefore(ins, il.Create(OpCodes.Callvirt, assetBundleName));
                 il.InsertBefore(ins, il.Create(OpCodes.Call, hookGenericRef));
                 il.InsertBefore(ins, il.Create(OpCodes.Ret));
             }
