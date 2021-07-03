@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.IO;
 using UnityEngine;
 
@@ -27,6 +28,9 @@ namespace PHMoreSlotIDPatchContainer
                 action(datas, abc, customDataListLoader2);
             }
         }
+
+        private static MethodInfo CustomDataListLoader_Load = 
+            typeof(CustomDataListLoader).GetMethod("Load", new Type[]{typeof(TextReader)});
 
         public static void Setup_Search(Dictionary<int, T_Data> datas, string search, Action<Dictionary<int, T_Data>, global::AssetBundleController, CustomDataListLoader> action)
         {
@@ -66,15 +70,8 @@ namespace PHMoreSlotIDPatchContainer
                 using(var streamReader = new StreamReader(new FileStream(text3, FileMode.Open)))
                 {
                     var assetBundleName = streamReader.ReadLine();
-                    var contents = streamReader.ReadToEnd();
-
-                    var tempFileName = Path.GetTempFileName();
-                    File.WriteAllText(tempFileName, contents);
-
                     var customDataListLoader = new CustomDataListLoader();
-                    customDataListLoader.Load(tempFileName);
-                    File.Delete(tempFileName);
-
+                    CustomDataListLoader_Load.Invoke(customDataListLoader, new object[]{ streamReader });
                     var assetBundleController2 = new global::AssetBundleController();
                     assetBundleController2.OpenFromFile(GlobalData.assetBundlePath, assetBundleName);
                     action(datas, assetBundleController2, customDataListLoader);
