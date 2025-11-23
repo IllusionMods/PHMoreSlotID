@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyDescription("A soft patch version of PHMoreSlotID for use with BepInEx v5.x")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("https://github.com/IllusionMods/PHMoreSlotID")]
+[assembly: AssemblyCompany("https://gitgoon.dev/IllusionMods/PHMoreSlotID")]
 [assembly: AssemblyProduct("PHMoreSlotID for BepInEx")]
 [assembly: AssemblyCopyright("Copyright © 2021")]
 [assembly: AssemblyTrademark("")]
